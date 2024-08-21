@@ -21,10 +21,25 @@ int otp_load_key(struct otp_system* crypto, char* filepath) {
 
 // decode byte using key,
 // updates the key while doing so
-byte otp_decode_byte(struct otp_system*, byte encrypted) {
+byte otp_decode_byte(struct otp_system* crypto, byte encrypted) {
     // TODO:
 }
 
 // encode byte using key
-// updates the key while doing so
-byte otp_encode_byte(struct otp_system*, byte content);
+// saves the encoded byte to dest
+// and updates the key while doing so
+// 
+int otp_encode_byte(struct otp_system* crypto, byte content, byte* dest) {
+    byte key_byte;
+    size_t read = fread(&key_byte, sizeof(byte), 1, crypto->key);
+
+    if(read == 0) return 1;
+
+    *dest = content ^ key_byte;
+    return 1;
+}
+
+// close the file opened as a key
+void otp_close_key(struct otp_system* crypto) {
+    fclose(crypto->key);
+}
